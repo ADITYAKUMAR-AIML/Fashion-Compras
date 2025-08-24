@@ -1,0 +1,85 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Image Slider</title>
+  <style>
+    .slider {
+      width: 500px;
+      height: 350px;
+      margin: auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .slides {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .slides img {
+      width: 500px;
+      height: 350px;
+      object-fit: cover;
+    }
+
+    .btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .prev { left: 10px; }
+    .next { right: 10px; }
+  </style>
+</head>
+<body>
+  <div class="slider">
+    <div class="slides" id="slides">
+    
+      <img src="{% static 'images/somany.jpg' %}" alt="2" class="Aimage">
+      <img src = "static/images/image3.avif" alt="buggati" class="Aimage">
+      <img src = "static/images/gta6.png" alt="gta6" class="Aimage">
+      <img src = "static/images/bike.avif" alt="bike" class="Aimage">
+
+    </div>
+    <button class="btn prev" onclick="prevSlide()">❮</button>
+    <button class="btn next" onclick="nextSlide()">❯</button>
+  </div>
+
+  <script>
+    let index = 0;
+    const slides = document.getElementById("slides");
+    const total = slides.children.length;
+
+    function showSlide() {
+      slides.style.transform = `translateX(${-index * 500}px)`;
+    }
+
+    function nextSlide() {
+      index = (index + 1) % total;
+      showSlide();
+    }
+
+    function prevSlide() {
+      index = (index - 1 + total) % total;
+      showSlide();
+    }
+
+    setInterval(nextSlide,3000);
+
+  </script>
+</body>
+</html>

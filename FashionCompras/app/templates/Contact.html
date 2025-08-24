@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding-top: 50px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            margin: auto;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        img {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #ff4b5c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #ff1f3d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Do u need any Help ?</h2>
+        <img src="https://www.emojirequest.com/images/CallMeFaceEmoji.jpg" alt="Sad Emoji">
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</body>
+</html>

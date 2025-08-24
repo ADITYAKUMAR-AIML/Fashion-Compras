@@ -1,0 +1,172 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif;}
+    body {background: #f8f9fa; color: #333;}
+
+    .deals-section {
+      padding: 2rem 5%;
+      background: #fff;
+      margin: 2rem 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .deals-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .deals-header h2 {
+      font-size: 1.8rem;
+      color: #ff6b6b;
+    }
+
+    /* Countdown */
+    .countdown {
+      background: #ff6b6b;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    /* Deals Grid */
+    .deals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+      gap: 1.5rem;
+    }
+
+    .deal-item {
+      background: #fdfdfd;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: 0.3s;
+      position: relative;
+    }
+
+    .deal-item img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 0.8rem;
+    }
+
+    .deal-item h3 {font-size: 1rem; margin-bottom: 0.5rem;}
+    .deal-item p {color: #666; margin-bottom: 0.5rem;}
+
+    /* Price Styling */
+    .price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #333;
+    }
+    .old-price {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 0.9rem;
+      margin-left: 0.5rem;
+    }
+
+    /* Discount Badge */
+    .badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ff6b6b;
+      color: #fff;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .deal-item button {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    .deal-item:hover {
+      transform: translateY(-5px);
+    }
+
+  </style>
+
+<body>
+
+  <!-- Deals Section -->
+  <section class="deals-section">
+    <div class="deals-header">
+      <h2>🔥 Deals of the Day</h2>
+      <div class="countdown" id="countdown">05:23:45</div>
+    </div>
+
+    <div class="deals-grid">
+      <div class="deal-item">
+        <span class="badge">-30%</span>
+        <img src="https://via.placeholder.com/200" alt="Deal Product">
+        <h3>Wireless Headphones</h3>
+        <p>High-quality sound</p>
+        <div>
+          <span class="price">$70</span>
+          <span class="old-price">$100</span>
+        </div>
+        <button>Add to Cart</button>
+      </div>
+
+      <div class="deal-item">
+        <span class="badge">-50%</span>
+        <img src="https://via.placeholder.com/200" alt="Deal Product">
+        <h3>Smart Watch</h3>
+        <p>Fitness & Notifications</p>
+        <div>
+          <span class="price">$50</span>
+          <span class="old-price">$100</span>
+        </div>
+        <button>Add to Cart</button>
+      </div>
+
+      <div class="deal-item">
+        <span class="badge">-20%</span>
+        <img src="https://via.placeholder.com/200" alt="Deal Product">
+        <h3>Gaming Mouse</h3>
+        <p>RGB Lighting</p>
+        <div>
+          <span class="price">$40</span>
+          <span class="old-price">$50</span>
+        </div>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Countdown Script -->
+  <script>
+    // Example countdown timer (5 hours)
+    let time = 5 * 60 * 60; // 5 hours in seconds
+    const countdownEl = document.getElementById("countdown");
+
+    function updateCountdown() {
+      const hours = String(Math.floor(time / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((time % 3600) / 60)).padStart(2, "0");
+      const seconds = String(time % 60).padStart(2, "0");
+      countdownEl.textContent = `${hours}:${minutes}:${seconds}`;
+      time--;
+      if (time < 0) clearInterval(timer);
+    }
+
+    const timer = setInterval(updateCountdown, 1000);
+  </script>
+
+{% endblock %}

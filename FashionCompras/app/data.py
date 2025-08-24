@@ -1,0 +1,45 @@
+
+
+popular_items = [
+    {"name": "Laptop", "image": "image1.jpeg", "price": "$999"},
+    {"name": "Smartphone", "image": "image2.jpeg", "price": "$799"},
+    {"name": "Headphones", "image": "image3.avif", "price": "$199"},
+    {"name": "Smartwatch", "image": "image4.jpeg", "price": "$299"},
+    {"name": "Tablet", "image": "#", "price": "$499"},
+    {"name": "Gaming Console", "image": "#", "price": "$399"},
+    {"name": "Camera", "image": "#", "price": "$599"},
+    {"name": "Bluetooth Speaker", "image": "#", "price": "$149"},
+    {"name": "Wireless Mouse", "image": "#", "price": "$49"},
+    {"name": "Keyboard", "image": "#", "price": "$79"},
+    {"name": "Backpack", "image": "#", "price": "$89"},
+    {"name": "Sneakers", "image": "#", "price": "$120"},
+    {"name": "Sunglasses", "image": "#", "price": "$99"},
+    {"name": "Watch", "image": "#", "price": "$199"},
+    {"name": "Jacket", "image": "#", "price": "$149"},
+    {"name": "T-shirt", "image": "#", "price": "$25"},
+    {"name": "Jeans", "image": "#", "price": "$60"},
+    {"name": "Dress", "image": "#", "price": "$80"},
+    {"name": "Handbag", "image": "#", "price": "$150"},
+    {"name": "Wallet", "image": "#", "price": "$45"},
+    {"name": "Perfume", "image": "#", "price": "$70"},
+    {"name": "Lipstick", "image": "#", "price": "$30"},
+    {"name": "Earrings", "image": "#", "price": "$40"},
+    {"name": "Necklace", "image": "#", "price": "$60"},
+    {"name": "Bracelet", "image": "#", "price": "$35"},
+    {"name": "Shoes", "image": "#", "price": "$110"},
+    {"name": "Hoodie", "image": "#", "price": "$55"},
+    {"name": "Sweater", "image": "#", "price": "$65"},
+    {"name": "Coffee Maker", "image": "#", "price": "$120"},
+    {"name": "Blender", "image": "#", "price": "$90"},
+    {"name": "Fitness Tracker", "image": "#", "price": "$150"},
+    {"name": "Electric Toothbrush", "image": "#", "price": "$80"},
+    {"name": "Hair Dryer", "image": "#", "price": "$50"},
+    {"name": "Monitor", "image": "#", "price": "$250"},
+    {"name": "Printer", "image": "#", "price": "$200"}
+]
+
+Cart_items = [
+    {"name": "Laptop", "image": "image1.jpeg", "price": "$999"},
+    {"name": "Smartphone", "image": "image2.jpeg", "price": "$799"},
+    {"name": "Headphones", "image": "image3.avif", "price": "$199"},
+    {"name": "Smartwatch", "image": "image4.jpeg", "price": "$299"},]

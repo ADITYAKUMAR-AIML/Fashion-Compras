@@ -1,0 +1,260 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+
+
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif;}
+    body {background: #f8f9fa; color: #333;}
+
+    /* Container */
+    .product-container {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2rem;
+      padding: 2rem 5%;
+      background: #fff;
+      margin: 2rem auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 1200px;
+    }
+
+    /* Product Images */
+    .product-images {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .main-img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    .thumbnail-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .thumbnail-row img {
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
+    .thumbnail-row img:hover {
+      border-color: #ff6b6b;
+    }
+
+    /* Product Details */
+    .product-details h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .rating {
+      color: gold;
+      margin-bottom: 1rem;
+    }
+    .price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #ff6b6b;
+    }
+    .old-price {
+      text-decoration: line-through;
+      color: #777;
+      font-size: 1rem;
+      margin-left: 0.5rem;
+    }
+    .description {
+      margin: 1rem 0;
+      line-height: 1.5;
+    }
+
+    /* Quantity + Buttons */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .quantity button {
+      background: #ff6b6b;
+      border: none;
+      color: #fff;
+      padding: 0.5rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .quantity span {
+      min-width: 30px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .add-cart {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .add-cart:hover {opacity: 0.9;}
+
+    /* Product Info */
+    .product-info {
+      margin-top: 2rem;
+    }
+    .product-info h2 {
+      margin-bottom: 0.5rem;
+    }
+    .product-info ul {
+      margin-left: 1.5rem;
+      list-style: disc;
+    }
+
+    /* Related Products */
+    .related {
+      padding: 2rem 5%;
+      margin-top: 2rem;
+    }
+    .related h2 {
+      margin-bottom: 1.5rem;
+      color: #ff6b6b;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 1.5rem;
+    }
+    .related-item {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    .related-item img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 0.8rem;
+    }
+    .related-item:hover {transform: translateY(-5px);}
+    .related-item button {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .product-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Product Container -->
+  <div class="product-container">
+
+    <!-- Images -->
+    <div class="product-images">
+      <img src="https://via.placeholder.com/400" alt="Main Product" class="main-img" id="mainImage">
+      <div class="thumbnail-row">
+        <img src="https://via.placeholder.com/100" onclick="changeImage(this)">
+        <img src="https://via.placeholder.com/100/ff6b6b" onclick="changeImage(this)">
+        <img src="https://via.placeholder.com/100/333" onclick="changeImage(this)">
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="product-details">
+      <h1>Wireless Headphones</h1>
+      <div class="rating">⭐⭐⭐⭐☆ (120 reviews)</div>
+      <div>
+        <span class="price">$70</span>
+        <span class="old-price">$100</span>
+      </div>
+      <p class="description">
+        Experience high-quality sound with noise cancellation and long battery life. Perfect for music, calls, and gaming.
+      </p>
+      
+      <div class="actions">
+        <div class="quantity">
+          <button onclick="updateQty(-1)">-</button>
+          <span id="qty">1</span>
+          <button onclick="updateQty(1)">+</button>
+        </div>
+        <button class="add-cart">Add to Cart</button>
+      </div>
+
+      <div class="product-info">
+        <h2>Product Details</h2>
+        <ul>
+          <li>Bluetooth 5.0 Connectivity</li>
+          <li>20 Hours Battery Life</li>
+          <li>Noise Cancelling</li>
+          <li>1-Year Warranty</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <section class="related">
+    <h2>Related Products</h2>
+    <div class="related-grid">
+      <div class="related-item">
+        <img src="https://via.placeholder.com/200" alt="Related">
+        <h3>Smart Watch</h3>
+        <p>$50</p>
+        <button>Add to Cart</button>
+      </div>
+      <div class="related-item">
+        <img src="https://via.placeholder.com/200" alt="Related">
+        <h3>Gaming Mouse</h3>
+        <p>$40</p>
+        <button>Add to Cart</button>
+      </div>
+      <div class="related-item">
+        <img src="https://via.placeholder.com/200" alt="Related">
+        <h3>Wireless Speaker</h3>
+        <p>$60</p>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Script -->
+  <script>
+    function changeImage(img) {
+      document.getElementById("mainImage").src = img.src;
+    }
+
+    function updateQty(val) { //+1 or -1
+      let qtyEl = document.getElementById("qty");
+      let qty = parseInt(qtyEl.textContent);
+      qty = Math.max(1, qty + val);
+      qtyEl.textContent = qty;
+    }
+  </script>
+
+{%endblock%}
