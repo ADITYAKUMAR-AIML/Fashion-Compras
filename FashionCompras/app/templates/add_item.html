@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add New Item</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+    }
+
+    /* center the form on the screen */
+    .page-container{
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    form {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+
+    /* messages styling */
+    .messages {
+      max-width: 400px;
+      margin: 0 auto 12px auto;
+      box-sizing: border-box;
+    }
+    .message {
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+    /* success = green */
+    .message.success, .message.success a {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    /* error = red */
+    .message.error, .message.error a {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    /* info / warning fallback */
+    .message.info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    .message.warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    /* small note style in price label preserved */
+    .small-note { color:red; font-size:12px; }
+
+    @media (max-width: 480px){
+      form { padding: 16px; max-width: 360px; }
+      .messages { padding: 0 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div>
+      <!-- messages: errors red, success green -->
+      <div class="messages">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <h2 style="text-align:center; margin-top:0; margin-bottom:12px;">Add New Item</h2>
+
+      <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Example form fields -->
+        <label for="item-name">Item Name:</label>
+        <input type="text" id="item-name" name="name" value="{{ form_data.name }}" required>
+
+        <label for="item-desc">Description:</label>
+        <textarea id="item-desc" name="description" rows="3" required>{{ form_data.description }}</textarea>
+
+        <label for="item-qty">Quantity:</label>
+        <input type="number" id="item-qty" name="quantity" min="1" value="{{ form_data.quantity }}" required>
+
+        <label for="item-price">Price:<span class="small-note"> (2 decimal places only)</span></label>
+        <input type="number" id="item-price" name="price" min="1" step="0.01" value="{{ form_data.price }}" required>
+
+        <label for="item_image">Image</label>
+        <input type="file" id="item_image" name="image" accept="image/*">
+
+        <button type="submit">Add Item</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

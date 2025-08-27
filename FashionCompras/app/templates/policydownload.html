@@ -1,0 +1,83 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding-top: 50px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            margin: auto;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        img {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #ff4b5c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #ff1f3d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2> Fashion Compras's privacy policy </h2>
+        <img src="{% static 'images/Document_emoji.png' %}" alt="doc Emoji">
+        <a href="#" id="downloadLink">Download Privacy Policy</a>
+    </div>
+
+    <script>
+    document.getElementById("downloadLink").addEventListener("click", function(e) {
+      e.preventDefault();
+
+      // File content
+      const content = `
+        PRIVACY POLICY
+        Last Updated: ${new Date().toLocaleDateString()}
+
+        1. INTRODUCTION
+        This is me Aditya & u re on my new Full Stack app name FashionCompras created on 
+        8/25/2025 . 
+        
+        YOU'RE WELCOME
+      `;
+
+      // Create file blob
+      const blob = new Blob([content], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+
+      // Create invisible link
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Privacy_Policy.txt";
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  </script>
+
+
+</body>
+</html>
