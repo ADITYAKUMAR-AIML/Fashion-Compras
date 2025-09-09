@@ -5,14 +5,16 @@ from django.contrib.auth import login, logout
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages
+from django.db.models import Q 
 from django.contrib.auth.decorators import login_required
 from .data import popular_items, Cart_items
+from django.core.paginator import Paginator #To display the specific no of the items inside one page.
 from .form import ItemForm
-
+from django.shortcuts import render, get_object_or_404
 @login_required(login_url='login_page')  # if not logged in → redirect to /login/
 def home(request):
     context = {
-        'popular_items': popular_items
+        'items': Item.objects.all() #To get all of the items objects    
         }
     return render(request, 'home.html' , context)
 
@@ -80,16 +82,35 @@ def Deals(request):
     
     return render(request, "Deals.html")
 
-def Item(request, pk):
-    item = Item.objects.get(id=pk) #To get the req item.
-    context = {
-        'item': item
-    }
+def item_detail(request, pk):
+    item = get_object_or_404(Item, pk=pk)   # safer than .get()
+    context = {'item': item}
     return render(request, "item.html", context)
 
 
 def Contact(request):
     return render(request, "Contact.html")
+
+
+def ProductsPage(request):
+
+    q = request.GET.get('q', '').strip()
+
+    # Base queryset (you can order differently)
+    qs = Item.objects.all().order_by('-id')
+
+    # If search query present, filter by name / short_description / description
+    if q:
+        qs = qs.filter(
+            Q(name__icontains=q) |
+            Q(description__icontains=q)
+        )
+
+
+    context = {
+        'items': qs,  # what your template expects
+    }
+    return render(request, "products.html", context)
 
 
 from django.shortcuts import render, redirect
@@ -108,7 +129,12 @@ def add_item(request):
         'price': '',
         'quantity': '',
         'image': '',
+        'category': '',
     }
+
+    keys = request.POST.getlist("spec_key[]")
+    values = request.POST.getlist("spec_value[]")
+
     
     # Initialize form for GET requests
     form = ItemForm()
@@ -119,6 +145,7 @@ def add_item(request):
         price = request.POST.get("price", "")
         quantity = request.POST.get("quantity", "")
         image = request.FILES.get("image", None)
+        category = request.POST.get("category", "")
 
         # Update form data for potential re-display
         form_data.update({
@@ -126,6 +153,7 @@ def add_item(request):
             'description': description,
             'price': price,
             'quantity': quantity,
+            'category': category
         })
 
         # Check if item already exists
@@ -160,13 +188,18 @@ def add_item(request):
                 return render(request, "add_item.html", context)
             
             # Create new item
-            Item.objects.create(
+            new_item = Item.objects.create(
                 name=name,
                 description=description,
                 price=price_value,
                 quantity=quantity,
-                image=image
+                image=image,
+                category=category
             )
+            for k, v in zip(keys, values):
+                if k.strip() and v.strip():  # avoid empty entries
+                    Specification.objects.create(item=new_item, key=k.strip(), value=v.strip())
+            
             messages.success(request, "Item added successfully!")
             return redirect("add_item")
     
@@ -187,3 +220,12 @@ def Item_Auth(name):
 def PrivacyPolicy(request):
     
     return render(request, "policydownload.html")    
+
+def category(request, category_name):
+    items = Item.objects.filter(category=category_name)
+    context = {
+        'items': items,
+        'category': category_name
+    }
+    return render(request, 'category.html', context)
+   

@@ -1,0 +1,250 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Products</title>
+
+  <style>
+    /* ---------- Page layout ---------- */
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #f7f8fa;
+      margin: 0;
+      padding: 24px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ---------- Search bar ---------- */
+    .search-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    #product-search {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.02) inset;
+    }
+
+    #reset-search {
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: none;
+      background:#eee;
+      cursor: pointer;
+    }
+
+    /* ---------- Product list ---------- */
+    #products-container {
+      display: grid;
+      gap: 16px;
+    }
+
+    .product-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(23,23,23,0.04);
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .product-image {
+      width: 140px;
+      min-width: 140px;
+      height: 110px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      border-radius:8px;
+      background:#fafafa;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03) inset;
+    }
+
+    .product-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display:block;
+    }
+
+    .product-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .product-title {
+      display: inline-block;
+      font-weight: 700;
+      text-decoration: none;
+      color: #222;
+      font-size: 16px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .product-price {
+      margin: 6px 0;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .product-desc {
+      margin: 0;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .product-actions {
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .add-to-cart {
+      background-color:#ff6b6b;
+      color:white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* small link-styled buttons if you prefer */
+    .view-details {
+      background: none;
+      border: none;
+      color: #333;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 820px) {
+      .product-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .product-image {
+        width: 100%;
+        min-width: unset;
+        height: 180px;
+      }
+      .product-actions {
+        justify-content: space-between;
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="search-row">
+      <!-- server-side search form (optional) -->
+      <form method="get" action="" style="flex:1; display:flex; gap:12px;">
+        <input id="product-search" name="q" type="text" placeholder="Search products..." value="{{ request.GET.q|default_if_none:'' }}">
+        <button id="reset-search" type="button">Clear</button>
+      </form>
+
+      <!-- optionally: add link to cart or filters here -->
+    </div>
+
+    <div id="products-container">
+      {% for item in items %}
+      <div class="product-card" data-name="{{ item.name|lower }}">
+        <div class="product-image">
+          <a href="{% url 'item' item.pk %}">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.name }}">
+            {% else %}
+              <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}">
+            {% endif %}
+          </a>
+        </div>
+
+        <div class="product-info">
+          <a href="{% url 'item' item.pk %}" class="product-title">{{ item.name }}</a>
+          <p class="product-price">${{ item.price }}</p>
+          {% if item.short_description %}
+            <p class="product-desc">{{ item.short_description }}</p>
+          {% endif %}
+        </div>
+
+        <div class="product-actions">
+          <!-- Add to cart form (replace 'add_to_cart' with your url name) -->
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" value="{{ item.pk }}">
+            <button type="submit" class="add-to-cart">Add to Cart</button>
+          </form>
+
+          <!-- optional quick view -->
+          <a href="{% url 'item' item.pk %}" class="view-details" title="View details">View</a>
+        </div>
+      </div>
+      {% empty %}
+      <p>No products found.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+    // Client-side search filter (instant)
+    (function () {
+      const searchInput = document.getElementById('product-search');
+      const resetBtn = document.getElementById('reset-search');
+      const cards = Array.from(document.querySelectorAll('.product-card'));
+
+      function filter(q) {
+        const s = q.trim().toLowerCase();
+        cards.forEach(card => {
+          const name = card.dataset.name || '';
+          if (!s || name.includes(s)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      // instant filter on typing
+      searchInput.addEventListener('input', function (e) {
+        filter(e.target.value);
+      });
+
+      // clear button
+      resetBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        filter('');
+      });
+
+      // initial filter if page loaded with q param
+      document.addEventListener('DOMContentLoaded', function () {
+        if (searchInput.value) filter(searchInput.value);
+      });
+    })();
+  </script>
+</body>
+</html>

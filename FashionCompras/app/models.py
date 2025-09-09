@@ -34,15 +34,34 @@ class Auth(AbstractBaseUser, PermissionsMixin):
 
 from django.db import models
 
+from django.db import models
+
 class Item(models.Model):
+    CATEGORY_CHOICES = [
+        ("fashion", "Fashion"),
+        ("electronics", "Electronics"),
+        ("food", "Food"),
+        ("home", "Home"),
+        ("gaming", "Gaming"),
+    ]
+
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=1000)   # 👈 usually TextField doesn’t need max_length
+    description = models.TextField()   # TextField doesn’t need max_length
     price = models.DecimalField(max_digits=10, decimal_places=2)  
-    quantity = models.PositiveIntegerField(default=0)  # 👈 ensures no negative qty
-    image = models.ImageField(upload_to="images/", default="images/blank_image.png", blank=True)
+    quantity = models.PositiveIntegerField(default=0)
+    image = models.ImageField(default="blank_image.png", null=True, blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="fashion")  # 👈 added field
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.category})"
 
+
+class Specification(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="specifications")
+    key = models.CharField(max_length=100)   # e.g. "Battery Life"
+    value = models.CharField(max_length=255) # e.g. "20 Hours"
+
+    def __str__(self):
+        return f"{self.key}: {self.value}"

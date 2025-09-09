@@ -1,3 +1,5 @@
+{%load static%}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +41,7 @@
 <body>
     <div class="container">
         <h2>Do u need any Help ?</h2>
-        <img src="https://www.emojirequest.com/images/CallMeFaceEmoji.jpg" alt="Sad Emoji">
+        <img src="{% static "images/contact.jpg" %}" alt="Sad Emoji">
         <form method="POST">
             {% csrf_token %}
             <button type="submit">Contact</button>

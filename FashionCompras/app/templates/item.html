@@ -1,5 +1,10 @@
 {% extends "main.html" %}
 
+
+{% load static %}
+
+
+
 {% block content %}
 
 
@@ -22,17 +27,26 @@
     }
 
     /* Product Images */
-    .product-images {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .other-images  img{
+      width: 100%;
+      height: 100px;
+      object-fit: fit;
+      border-radius: 10px;
     }
     .main-img {
-      width: 100%;
-      max-width: 400px;
+      height: 400px;
+      width: 450px;
       border-radius: 10px;
       margin-bottom: 1rem;
     }
+    .main-img img{
+      width: 100%;
+      height: 100%;
+      object-fit: fit;
+      border-radius: 10px;
+    }
+
+
     .thumbnail-row {
       display: flex;
       gap: 0.5rem;
@@ -58,7 +72,7 @@
       color: gold;
       margin-bottom: 1rem;
     }
-    .price {
+    #price {
       font-size: 1.5rem;
       font-weight: bold;
       margin-bottom: 0.5rem;
@@ -175,26 +189,45 @@
   <!-- Product Container -->
   <div class="product-container">
 
-    <!-- Images -->
     <div class="product-images">
-      <img src="https://via.placeholder.com/400" alt="Main Product" class="main-img" id="mainImage">
+      <!-- Main image -->
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="main-img" id="mainImage">
+      {% else %}
+        <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}" class="main-img" id="mainImage">
+      {% endif %}
+
+      <!-- Thumbnails -->
       <div class="thumbnail-row">
-        <img src="https://via.placeholder.com/100" onclick="changeImage(this)">
-        <img src="https://via.placeholder.com/100/ff6b6b" onclick="changeImage(this)">
-        <img src="https://via.placeholder.com/100/333" onclick="changeImage(this)">
+        <!-- Example static thumbnail -->
+        <img src="{% static 'images/gta6.png' %}" alt="thumb" onclick="changeImage(this)" class="other-images">
+
+        <!-- Item image again -->
+        {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.name }}" class="other-images" onclick="changeImage(this)">
+        {% else %}
+          <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}" class="other-images" onclick="changeImage(this)">
+        {% endif %}
+
+        <!-- Extra placeholders -->
+        <img src="{% static 'images/blank_image.png' %}" alt="thumb" onclick="changeImage(this)" class="other-images">
+        <img src="{% static 'images/blank_image.png' %}" alt="thumb" onclick="changeImage(this)" class="other-images">
       </div>
     </div>
 
+
+
+
+
     <!-- Details -->
     <div class="product-details">
-      <h1>Wireless Headphones</h1>
+      <h1>{{ item.name }}</h1>
       <div class="rating">⭐⭐⭐⭐☆ (120 reviews)</div>
       <div>
-        <span class="price">$70</span>
-        <span class="old-price">$100</span>
+        <span id="price">${{ item.price }}</span>
       </div>
       <p class="description">
-        Experience high-quality sound with noise cancellation and long battery life. Perfect for music, calls, and gaming.
+        {{item.description}}
       </p>
       
       <div class="actions">
@@ -209,10 +242,9 @@
       <div class="product-info">
         <h2>Product Details</h2>
         <ul>
-          <li>Bluetooth 5.0 Connectivity</li>
-          <li>20 Hours Battery Life</li>
-          <li>Noise Cancelling</li>
-          <li>1-Year Warranty</li>
+           {% for spec in item.specifications.all %}
+            <li>{{ spec.key }}: {{ spec.value }}</li>
+          {% endfor %}
         </ul>
       </div>
     </div>
@@ -244,17 +276,30 @@
   </section>
 
   <!-- Script -->
-  <script>
-    function changeImage(img) {
-      document.getElementById("mainImage").src = img.src;
-    }
+<script>
+  // Change main image when thumbnail clicked
+  function changeImage(img) {
+    document.getElementById("mainImage").src = img.src;
+  }
 
-    function updateQty(val) { //+1 or -1
-      let qtyEl = document.getElementById("qty");
-      let qty = parseInt(qtyEl.textContent);
-      qty = Math.max(1, qty + val);
-      qtyEl.textContent = qty;
-    }
-  </script>
+  // Quantity & Price update
+function updateQty(val) { // val = +1 or -1
+  let qtyEl = document.getElementById("qty");     // quantity display
+  let priceEl = document.getElementById("price"); // price element
+
+  let qty = parseInt(qtyEl.textContent) || 1;
+
+  // Remove "$" and convert to number
+  let basePrice = parseFloat(priceEl.textContent.replace("$", "")) || 0;
+
+  qty = Math.max(1, qty + val); // don’t go below 1
+  qtyEl.textContent = qty;
+
+  let newPrice = (basePrice * qty);
+  priceEl.textContent = "$" + newPrice;
+}
+
+</script>
+
 
 {%endblock%}

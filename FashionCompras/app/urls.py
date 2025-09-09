@@ -10,10 +10,12 @@ urlpatterns = [
     path('logout/', views.Logout, name='logout'),
     path('Cart-items/', views.Cart, name='cart'),
     path('deals/', views.Deals, name='deals'),
-    path('Item/id=pk', views.Item, name='item'),
+    path('item/<int:pk>/', views.item_detail, name='item'),
     path("add/", views.add_item, name="add_item"),
     path('Contact/', views.Contact, name='Contact'),
     path('PrivacyPolicy/', views.PrivacyPolicy, name='PrivacyPolicy'),
+    path('Shop/', views.ProductsPage, name='Shop'),
+    path('category/<str:category_name>/', views.category, name='category'),
 ]
 
 if settings.DEBUG:

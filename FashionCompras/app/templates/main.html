@@ -1,6 +1,6 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-{% load static %}
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -8,6 +8,11 @@
     <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon" />
     <link rel="stylesheet" href="{% static 'style.css' %}" />
     <title>StudyBuddy - Find study partners around the world!</title>
+      <!-- Load Lottie player -->
+  <script 
+    src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" 
+    type="module">
+  </script>
 </head>
 
 <body>
@@ -23,7 +28,7 @@
     <a href="{% url 'home' %}" id="LogoId">FashionCompras</a>
     </div>
     <nav>
-      <a href="#">Home</a>
+      <a href="{% url 'home' %}">Home</a>
       <a href="#">Shop</a>
       <a href="{% url 'deals' %}">Deals</a>
       <a href="{% url 'cart' %}">Cart</a>
@@ -35,7 +40,7 @@
 
       <!-- Footer -->
   <footer>
-    <p>&copy; 2025 ShopEase. All rights reserved. | <a href="#">Privacy Policy</a></p>
+    <p>&copy; 2025 ShopEase. All rights reserved. | <a href="{% url 'PrivacyPolicy' %}">Privacy Policy</a></p>
     <p style = "display: flex ; justify-content: center ; ">Made by Aditya with ♥</p>
   </footer>
 
