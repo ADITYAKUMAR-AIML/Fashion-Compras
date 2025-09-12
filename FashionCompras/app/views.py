@@ -83,10 +83,12 @@ def Deals(request):
     return render(request, "Deals.html")
 
 def item_detail(request, pk):
-    item = get_object_or_404(Item, pk=pk)   # safer than .get()
-    context = {'item': item}
+    item = get_object_or_404(Item.objects.prefetch_related("images"), pk=pk)
+    context = {
+        'item': item,
+        'images': item.images.all(),  # pass images separately if you want
+    }
     return render(request, "item.html", context)
-
 
 def Contact(request):
     return render(request, "Contact.html")
@@ -128,7 +130,6 @@ def add_item(request):
         'description': '',
         'price': '',
         'quantity': '',
-        'image': '',
         'category': '',
     }
 
@@ -144,7 +145,6 @@ def add_item(request):
         description = request.POST.get("description", "")
         price = request.POST.get("price", "")
         quantity = request.POST.get("quantity", "")
-        image = request.FILES.get("image", None)
         category = request.POST.get("category", "")
 
         # Update form data for potential re-display
@@ -193,9 +193,12 @@ def add_item(request):
                 description=description,
                 price=price_value,
                 quantity=quantity,
-                image=image,
                 category=category
             )
+                # Save multiple images
+                    # Save multiple images
+            for img in request.FILES.getlist("images"):
+                ItemImage.objects.create(item=new_item, image=img)
             for k, v in zip(keys, values):
                 if k.strip() and v.strip():  # avoid empty entries
                     Specification.objects.create(item=new_item, key=k.strip(), value=v.strip())
@@ -221,11 +224,13 @@ def PrivacyPolicy(request):
     
     return render(request, "policydownload.html")    
 
+from django.db.models import Q
+
 def category(request, category_name):
     items = Item.objects.filter(category=category_name)
+
     context = {
-        'items': items,
-        'category': category_name
+        "items": items,
+        "category": category_name,
     }
-    return render(request, 'category.html', context)
-   
+    return render(request, "category.html", context)

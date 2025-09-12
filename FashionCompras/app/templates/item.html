@@ -189,31 +189,26 @@
   <!-- Product Container -->
   <div class="product-container">
 
-    <div class="product-images">
-      <!-- Main image -->
-      {% if item.image %}
-        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="main-img" id="mainImage">
-      {% else %}
-        <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}" class="main-img" id="mainImage">
-      {% endif %}
+<div class="product-images">
 
-      <!-- Thumbnails -->
-      <div class="thumbnail-row">
-        <!-- Example static thumbnail -->
-        <img src="{% static 'images/gta6.png' %}" alt="thumb" onclick="changeImage(this)" class="other-images">
+  <!-- Main image -->
+  {% if item.images.exists %}
+    <img src="{{ item.images.first.image.url }}" alt="{{ item.name }}" class="main-img" id="mainImage">
+  {% else %}
+    <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}" class="main-img" id="mainImage">
+  {% endif %}
 
-        <!-- Item image again -->
-        {% if item.image %}
-          <img src="{{ item.image.url }}" alt="{{ item.name }}" class="other-images" onclick="changeImage(this)">
-        {% else %}
-          <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}" class="other-images" onclick="changeImage(this)">
-        {% endif %}
+  <!-- Thumbnails -->
+  <div class="thumbnail-row">
+    {% for img in item.images.all %}
+      <img src="{{ img.image.url }}" alt="{{ item.name }}" class="other-images" onclick="changeImage(this)">
+    {% empty %}
+      <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}" class="other-images" onclick="changeImage(this)">
+    {% endfor %}
+  </div>
+</div>
 
-        <!-- Extra placeholders -->
-        <img src="{% static 'images/blank_image.png' %}" alt="thumb" onclick="changeImage(this)" class="other-images">
-        <img src="{% static 'images/blank_image.png' %}" alt="thumb" onclick="changeImage(this)" class="other-images">
-      </div>
-    </div>
+
 
 
 
@@ -221,7 +216,11 @@
 
     <!-- Details -->
     <div class="product-details">
-      <h1>{{ item.name }}</h1>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <h1 style="margin:0;">{{ item.name }}</h1>
+        <p style="margin:0; color:grey;">{{ item.category }}</p>
+      </div>
+
       <div class="rating">⭐⭐⭐⭐☆ (120 reviews)</div>
       <div>
         <span id="price">${{ item.price }}</span>
