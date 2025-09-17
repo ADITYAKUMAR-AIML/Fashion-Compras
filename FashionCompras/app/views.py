@@ -146,6 +146,7 @@ def add_item(request):
         price = request.POST.get("price", "")
         quantity = request.POST.get("quantity", "")
         category = request.POST.get("category", "")
+        
 
         # Update form data for potential re-display
         form_data.update({
@@ -193,7 +194,8 @@ def add_item(request):
                 description=description,
                 price=price_value,
                 quantity=quantity,
-                category=category
+                category=category,
+                user=request.user #Need to add for the user field too.
             )
                 # Save multiple images
                     # Save multiple images
@@ -234,3 +236,74 @@ def category(request, category_name):
         "category": category_name,
     }
     return render(request, "category.html", context)
+
+
+@login_required
+def edit_item(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+
+    # 1) Ownership check — only owner can edit
+    if item.user != request.user:
+        messages.error(request, "You are not allowed to edit this item.")
+        return redirect("home")   # or return HttpResponseForbidden()
+
+    # Prepare initial data (similar to your add_item)
+    form_data = {
+        'name': item.name,
+        'description': item.description,
+        'price': item.price,
+        'quantity': item.quantity,
+        'category': item.category,
+    }
+
+    keys = request.POST.getlist("spec_key[]")
+    values = request.POST.getlist("spec_value[]")
+
+    form = ItemForm(instance=item)
+
+    if request.method == "POST":
+        # If you prefer using fields like in add_item, you can copy that logic.
+        # Here's a simple approach using the form:
+        form = ItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            edited_item = form.save(commit=False)
+            # Ensure the user remains the owner
+            edited_item.user = request.user
+            # validate/normalize price if needed (example)
+            try:
+                price_value = Decimal(request.POST.get("price", edited_item.price))
+                if price_value.as_tuple().exponent < -2:
+                    messages.error(request, "Price cannot have more than 2 decimal places!")
+                    return render(request, "edit_item.html", {"form": form, "form_data": form_data, "item": item})
+                if price_value == price_value.to_integral_value():
+                    price_value = price_value + Decimal("0.99")
+                edited_item.price = price_value
+            except (InvalidOperation, ValueError):
+                messages.error(request, "Please enter a valid price!")
+                return render(request, "edit_item.html", {"form": form, "form_data": form_data, "item": item})
+
+            edited_item.save()
+
+            # Images: optional — here we append new uploaded images
+            for img in request.FILES.getlist("images"):
+                ItemImage.objects.create(item=edited_item, image=img)
+
+            # Specs: you can choose to remove old ones then add new ones, or update
+            # Example: delete all old specs and create new ones from posted spec lists:
+            Specification.objects.filter(item=edited_item).delete()
+            for k, v in zip(keys, values):
+                if k.strip() and v.strip():
+                    Specification.objects.create(item=edited_item, key=k.strip(), value=v.strip())
+
+            messages.success(request, "Item updated successfully!")
+            return redirect("item", pk=edited_item.pk)  # or wherever
+        else:
+            messages.error(request, "Please fix the errors below.")
+            form_data.update(request.POST)
+
+    context = {
+        "form": form,
+        "form_data": form_data,
+        "item": item,
+    }
+    return render(request, "edit_item.html", context)

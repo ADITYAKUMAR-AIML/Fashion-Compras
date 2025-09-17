@@ -1,0 +1,176 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Edit item</h2>
+
+<form method="post" enctype="multipart/form-data" id="edit-item-form">
+    {% csrf_token %}
+
+    {# Show non-field errors #}
+    {% if form.non_field_errors %}
+        <div class="error">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <div>
+        <label for="id_name">Name</label>
+        <input type="text" name="name" id="id_name"
+               value="{{ form.name.value|default:form_data.name }}">
+        {% if form.name.errors %}
+            <div class="error">{{ form.name.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="id_description">Description</label>
+        <textarea name="description" id="id_description">{{ form.description.value|default:form_data.description }}</textarea>
+        {% if form.description.errors %}
+            <div class="error">{{ form.description.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="id_price">Price</label>
+        <input type="text" name="price" id="id_price" value="{{ form.price.value|default:form_data.price }}">
+        {% if form.price.errors %}
+            <div class="error">{{ form.price.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="id_quantity">Quantity</label>
+        <input type="number" name="quantity" id="id_quantity" value="{{ form.quantity.value|default:form_data.quantity }}">
+        {% if form.quantity.errors %}
+            <div class="error">{{ form.quantity.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="id_category">Category</label>
+        <input type="text" name="category" id="id_category" value="{{ form.category.value|default:form_data.category }}">
+        {% if form.category.errors %}
+            <div class="error">{{ form.category.errors }}</div>
+        {% endif %}
+    </div>
+
+    <hr>
+    <h3>Specifications</h3>
+    <p>Add key/value pairs for specifications. Existing specs are shown below and can be edited.</p>
+
+    <table id="spec-table">
+        <thead>
+            <tr><th>Key</th><th>Value</th><th></th></tr>
+        </thead>
+        <tbody>
+            {# If form was posted back, request.POST will repopulate via form_data; otherwise prefill from item.specification_set #}
+            {% if form_data.specs %}
+                {# optional: if you provide specs in form_data as lists #}
+            {% endif %}
+
+            {% if item and item.specification_set.all %}
+                {% for spec in item.specification_set.all %}
+                <tr>
+                    <td><input type="text" name="spec_key[]" value="{{ spec.key }}"></td>
+                    <td><input type="text" name="spec_value[]" value="{{ spec.value }}"></td>
+                    <td><button type="button" class="remove-spec">Remove</button></td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+
+        </tbody>
+    </table>
+    <p><button type="button" id="add-spec">Add specification</button></p>
+
+    <hr>
+    <h3>Images</h3>
+    <p>Upload new images to be appended to the item. Existing images are shown for reference.</p>
+
+    <div id="existing-images">
+        {% if item and item.itemimage_set.all %}
+            {% for img in item.itemimage_set.all %}
+                <div class="thumb">
+                    <img src="{{ img.image.url }}" alt="image" style="max-width:150px; max-height:150px;" />
+                    {# If you later implement image deletion in the backend, you can add a checkbox like below: #}
+                    <!-- <label><input type="checkbox" name="remove_image_ids" value="{{ img.id }}"> Remove</label> -->
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No existing images.</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="id_images">Add images</label>
+        <input type="file" name="images" id="id_images" multiple accept="image/*">
+    </div>
+
+    <hr>
+    <div>
+        <button type="submit">Save changes</button>
+        <a href="{% url 'item' item.pk %}">Cancel</a>
+    </div>
+</form>
+
+<script>
+(function(){
+    // Add new spec row
+    const addBtn = document.getElementById('add-spec');
+    const specTableBody = document.querySelector('#spec-table tbody');
+
+    addBtn && addBtn.addEventListener('click', function(){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" name="spec_key[]"></td>
+            <td><input type="text" name="spec_value[]"></td>
+            <td><button type="button" class="remove-spec">Remove</button></td>
+        `;
+        specTableBody.appendChild(tr);
+    });
+
+    // Remove spec row (event delegation)
+    specTableBody && specTableBody.addEventListener('click', function(e){
+        if (e.target && e.target.classList.contains('remove-spec')){
+            const row = e.target.closest('tr');
+            row && row.remove();
+        }
+    });
+
+    // Optional: preview selected images (client-side)
+    const imagesInput = document.getElementById('id_images');
+    if (imagesInput) {
+        imagesInput.addEventListener('change', function(){
+            const preview = document.getElementById('image-preview');
+            // create preview container if not present
+            if (!preview) {
+                const p = document.createElement('div');
+                p.id = 'image-preview';
+                imagesInput.parentNode.insertBefore(p, imagesInput.nextSibling);
+            }
+            const container = document.getElementById('image-preview');
+            container.innerHTML = '';
+            Array.from(imagesInput.files).forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+                const reader = new FileReader();
+                reader.onload = function(ev){
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.style.maxWidth = '120px';
+                    img.style.maxHeight = '120px';
+                    img.style.marginRight = '8px';
+                    container.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            });
+        });
+    }
+})();
+</script>
+
+<style>
+    .error { color: #b00020; }
+    .thumb { display:inline-block; margin:6px; text-align:center }
+</style>
+
+{% endblock %}

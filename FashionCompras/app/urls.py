@@ -16,6 +16,7 @@ urlpatterns = [
     path('PrivacyPolicy/', views.PrivacyPolicy, name='PrivacyPolicy'),
     path('Shop/', views.ProductsPage, name='Shop'),
     path('category/<str:category_name>/', views.category, name='category'),
+    path("item/<int:pk>/edit/", views.edit_item, name="edit_item"),
 ]
 
 if settings.DEBUG:

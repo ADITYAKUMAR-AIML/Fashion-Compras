@@ -1,21 +1,10 @@
+{% extends 'main.html' %}
+
 {% load static %}
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Products</title>
+
+{% block content %}
 
   <style>
-    /* ---------- Page layout ---------- */
-    body {
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      background: #f7f8fa;
-      margin: 0;
-      padding: 24px;
-      color: #222;
-    }
-
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -172,24 +161,21 @@
     </div>
 
     <div id="products-container">
-      {% for item in items %}
-      <div class="product-card" data-name="{{ item.name|lower }}">
+      {% for i in items %}
+      <div class="product-card" data-name="{{ i.name|lower }}"> <!-- Write the name in lower case-->
         <div class="product-image">
-          <a href="{% url 'item' item.pk %}">
-            {% if item.image %}
-              <img src="{{ item.image.url }}" alt="{{ item.name }}">
+          <a href="{% url 'item' i.pk %}">
+            {% if i.images.exists %}
+              <img src="{{ i.images.first.image.url }}" alt="{{ i.name }}">
             {% else %}
-              <img src="{% static 'images/blank_image.png' %}" alt="{{ item.name }}">
+              <img src="{% static 'images/blank_image.png' %}" alt="{{ i.name }}">
             {% endif %}
           </a>
         </div>
 
         <div class="product-info">
-          <a href="{% url 'item' item.pk %}" class="product-title">{{ item.name }}</a>
-          <p class="product-price">${{ item.price }}</p>
-          {% if item.short_description %}
-            <p class="product-desc">{{ item.short_description }}</p>
-          {% endif %}
+          <a href="{% url 'item' i.pk %}" class="product-title">{{ i.name }}</a>
+          <p class="product-price">${{ i.price }}</p>
         </div>
 
         <div class="product-actions">
@@ -201,7 +187,7 @@
           </form>
 
           <!-- optional quick view -->
-          <a href="{% url 'item' item.pk %}" class="view-details" title="View details">View</a>
+          <a href="{% url 'item' i.pk %}" class="view-details" title="View details">View</a>
         </div>
       </div>
       {% empty %}
@@ -247,4 +233,4 @@
     })();
   </script>
 </body>
-</html>
+{% endblock %}
